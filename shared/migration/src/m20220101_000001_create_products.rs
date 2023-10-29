@@ -32,29 +32,34 @@ impl MigrationTrait for Migration
         .col
         (
             ColumnDef::new(Products::Name)
-            .string(),
+            .string()
+            .not_null(),
         )
         .col
         (
             ColumnDef::new(Products::Price)
             .decimal_len(10, 2)
+            .not_null(),
         )
         .col 
         (
             ColumnDef::new(Products::Quantity)
             .integer()
+            .not_null(),
         )
         .col
         (
             ColumnDef::new(Products::CreatedAt)
             .timestamp_with_time_zone()
-            .extra("DEFAULT NOW()")
+            .not_null()
+            .extra("DEFAULT NOW()"),
         )
         .col
         (
             ColumnDef::new(Products::UpdatedAt)
             .timestamp_with_time_zone()
-            .extra("DEFAULT NOW()")
+            .not_null()
+            .extra("DEFAULT NOW()"),
         )
         .to_owned();
 
