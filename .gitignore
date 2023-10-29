@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+/target
+.env
+.postgres.env
+Cargo.lock
+
+uploads/*
+!uploads/.gitkeep

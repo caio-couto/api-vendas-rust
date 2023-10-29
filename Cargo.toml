@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "modules/products",
+  "shared/http",
+  "shared/migration"
+]
