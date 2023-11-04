@@ -1,15 +1,16 @@
 [package]
-name = "http"
+name = "database"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-database = { path = "../database" }
+dotenv = "0.15.0"
 axum = "0.6.20"
 tokio = { version = "1.33.0", features = ["full"] }
-products = { path = "../../modules/products"}
+anyhow = { version = "1.0.69" }
+
 [dependencies.sea-orm]
 version = "0.12.0"
 features = [
@@ -17,3 +18,4 @@ features = [
   "runtime-tokio-rustls",  # `ASYNC_RUNTIME` feature
   "sqlx-postgres",         # `DATABASE_DRIVER` feature
 ]
+

@@ -2,5 +2,6 @@
 members = [
   "modules/products",
   "shared/http",
-  "shared/migration"
+  "shared/migration",
+  "shared/database"
 ]

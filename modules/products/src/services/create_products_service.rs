@@ -1,16 +1,17 @@
 use std::{sync::Arc, ops::Deref};
 use derive_builder::Builder;
-use sea_orm::{ DatabaseConnection, prelude::Decimal, ActiveValue::{ NotSet, Set }, ActiveModelTrait, DbErr };
-
-use crate::entity::products;
+use sea_orm::{ DatabaseConnection, prelude::Decimal, ActiveValue::{ NotSet, Set }, DbErr, ActiveModelTrait};
+use serde::Deserialize;
+use crate::entity::products::ActiveModel;
 
 #[derive(Builder, Clone, Default, Debug)]
 #[builder(setter(into))]
+#[derive(Deserialize)]
 pub struct CreateProductDto 
 {
-    name: String, 
-    price: Decimal, 
-    quantity: i32,
+    pub name: String, 
+    pub price: Decimal, 
+    pub quantity: i32,
 }
 
 #[derive(Builder, Clone, Default, Debug)]
@@ -22,18 +23,20 @@ pub struct CreateProductService
 
 impl CreateProductService 
 {
-    pub async fn execute(&self, create_category_dto: CreateProductDto) -> Result<(), DbErr>
+    pub async fn execute(&self, create_product_dto: CreateProductDto) -> Result<ActiveModel, DbErr>
     {
-        let _new_product = products::ActiveModel
+        let new_product = ActiveModel
         {
             id: NotSet,
-            name: Set(create_category_dto.name),
-            price: Set(create_category_dto.price),
-            quantity: Set(create_category_dto.quantity),
+            name: Set(create_product_dto.name),
+            price: Set(create_product_dto.price),
+            quantity: Set(create_product_dto.quantity),
             created_at: NotSet,
             updated_at: NotSet
-        }.save(self.connection.deref()).await?;
+        };
         
-        Ok(())
+        let new_product = new_product.save(self.connection.deref()).await?;
+        
+        Ok(new_product)
     }    
 }
