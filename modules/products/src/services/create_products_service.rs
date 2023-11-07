@@ -1,5 +1,7 @@
 use std::{sync::Arc, ops::Deref};
+use axum::http::StatusCode;
 use derive_builder::Builder;
+use errors::{ApiError, erros::Errors};
 use sea_orm::{ DatabaseConnection, prelude::Decimal, ActiveValue::{ NotSet, Set }, DbErr, ActiveModelTrait};
 use serde::Deserialize;
 use crate::entity::products::ActiveModel;
@@ -23,7 +25,7 @@ pub struct CreateProductService
 
 impl CreateProductService 
 {
-    pub async fn execute(&self, create_product_dto: CreateProductDto) -> Result<ActiveModel, DbErr>
+    pub async fn execute(&self, create_product_dto: CreateProductDto) -> Result<ActiveModel, ApiError>
     {
         let new_product = ActiveModel
         {
@@ -35,7 +37,9 @@ impl CreateProductService
             updated_at: NotSet
         };
         
-        let new_product = new_product.save(self.connection.deref()).await?;
+        let new_product = new_product.save(self.connection.deref())
+        .await
+        .map_err(|_: DbErr| ApiError { error_code: Errors::SERVER_ERROR, status_code: StatusCode::INTERNAL_SERVER_ERROR })?;
         
         Ok(new_product)
     }    

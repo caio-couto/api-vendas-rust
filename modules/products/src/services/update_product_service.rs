@@ -1,8 +1,10 @@
 use std::{sync::Arc, ops::Deref};
+use axum::http::StatusCode;
 use derive_builder::Builder;
+use errors::{ApiError, erros::Errors};
 use sea_orm::{ DatabaseConnection, prelude::{Decimal, Uuid} , ActiveValue::Set, DbErr, ActiveModelTrait, EntityTrait};
 use serde::Deserialize;
-use crate::entity::products;
+use crate::entity::products::{self, Model};
 
 #[derive(Builder, Clone, Default, Debug)]
 #[builder(setter(into))]
@@ -30,14 +32,26 @@ pub struct UpdateProductService
 
 impl UpdateProductService 
 {
-    pub async fn execute(&self, update_product_path: UpdateProductPath ,update_product_dto: UpdateProductDto) -> Result<products::Model, DbErr>
+    pub async fn execute(&self, update_product_path: UpdateProductPath ,update_product_dto: UpdateProductDto) -> Result<Model, ApiError>
     {
-        let id = Uuid::parse_str(update_product_path.id.as_str()).unwrap();
+        let id = Uuid::parse_str(update_product_path.id.as_str())
+        .map_err(|_| ApiError { error_code: Errors::INVALID_UUID, status_code: StatusCode::BAD_REQUEST })?;
 
         let product: Option<products::Model> = products::Entity::find_by_id(id)
-        .one(self.connection.deref()).await?; 
+        .one(self.connection.deref())
+        .await 
+        .map_err(|_: DbErr| ApiError { error_code: Errors::SERVER_ERROR, status_code: StatusCode::INTERNAL_SERVER_ERROR })?;
+
+
+        let product = product.ok_or(ApiError { error_code: Errors::USER_NOT_FOUND, status_code: StatusCode::NOT_FOUND });
+
+        let product = match product 
+        {
+            Ok(p) => p,
+            Err(e) => return Err(e)
+        };
     
-        let mut product: products::ActiveModel = product.unwrap().into();
+        let mut product: products::ActiveModel = product.into();
 
         match update_product_dto.name  
         {
@@ -59,7 +73,9 @@ impl UpdateProductService
 
         product.updated_at = Set(chrono::Utc::now().fixed_offset());
 
-        let product: products::Model = product.update(self.connection.deref()).await?;
+        let product: products::Model = product.update(self.connection.deref())
+        .await
+        .map_err(|_: DbErr| ApiError { error_code: Errors::SERVER_ERROR, status_code: StatusCode::INTERNAL_SERVER_ERROR })?;
    
         Ok(product)
     }    

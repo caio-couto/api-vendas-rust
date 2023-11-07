@@ -1,7 +1,9 @@
 use std::{sync::Arc, ops::Deref};
+use axum::http::StatusCode;
 use derive_builder::Builder;
 use sea_orm::{ DatabaseConnection, DbErr, EntityTrait};
 use crate::entity::products::{self, Entity};
+use errors::{ApiError, erros::Errors};
 
 #[derive(Builder, Clone, Default, Debug)]
 #[builder(setter(into))]
@@ -12,9 +14,12 @@ pub struct ListProductService
 
 impl ListProductService 
 {
-    pub async fn execute(&self) -> Result<Vec<products::Model>, DbErr>
+    pub async fn execute(&self) -> Result<Vec<products::Model>, ApiError>
     {        
-        let products: Vec<products::Model> = Entity::find().all(self.connection.deref()).await?;
+        let products: Vec<products::Model> = Entity::find()
+        .all(self.connection.deref())
+        .await
+        .map_err(|_: DbErr| ApiError { error_code: Errors::SERVER_ERROR, status_code: StatusCode::INTERNAL_SERVER_ERROR })?;
 
         Ok(products)
     }    

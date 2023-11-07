@@ -13,10 +13,6 @@ use crate::services::{
 pub struct ProductsController {}
 impl ProductsController 
 {
-    pub fn new() -> Self 
-    {
-        Self {  }
-    }
     pub async fn create(State(connection): State<Arc<DatabaseConnection>>, Json(products_dto): Json<CreateProductDto>) -> impl IntoResponse
     {
         let create_products_service = CreateProductServiceBuilder::default()
@@ -31,9 +27,19 @@ impl ProductsController
         .build()
         .unwrap();
 
-        let _product = create_products_service.execute(create_product_dto).await.unwrap();
+        let product = create_products_service.execute(create_product_dto).await;
 
-        "Poroduto Criado"
+        match product 
+        {
+            Ok(_) =>
+            {
+                return "Produto Criado.".into_response();
+            },
+            Err(e) =>
+            {
+                return e.into_response();
+            }
+        }
     }   
     pub async fn show(State(connection): State<Arc<DatabaseConnection>>, Path(show_product_path): Path<ShowProductPath>) -> impl IntoResponse
     {
@@ -47,11 +53,20 @@ impl ProductsController
         .build()
         .unwrap();
 
-        let product = show_product_service.execute(show_product_path).await.unwrap();
+        let product = show_product_service.execute(show_product_path).await;
 
-        let product = serde_json::to_string(&product).unwrap();
-
-        product
+        match product 
+        {
+            Ok(p) =>
+            {
+                let product = serde_json::to_string(&p).unwrap();
+                return product.into_response();
+            },
+            Err(e) =>
+            {
+                return e.into_response();
+            }
+        }
     }
     pub async fn list(State(connection): State<Arc<DatabaseConnection>>) -> impl IntoResponse 
     {
@@ -78,9 +93,19 @@ impl ProductsController
         .build()
         .unwrap();
 
-        let _product = delete_product_service.execute(delete_product_path).await.unwrap();
+        let product = delete_product_service.execute(delete_product_path).await;
 
-        "[]"
+        match product 
+        {
+            Ok(_) =>
+            {
+                return "[]".into_response();
+            },
+            Err(e) =>
+            {
+                return e.into_response();
+            }
+        }
     }
     pub async fn update(State(connection): State<Arc<DatabaseConnection>>, Path(update_product_path): Path<UpdateProductPath>, Json(update_product_dto): Json<UpdateProductDto>) -> impl IntoResponse
     {
@@ -101,10 +126,19 @@ impl ProductsController
         .build()
         .unwrap();
 
-        let product = update_product_service.execute(update_product_path, update_product_dto).await.unwrap();
+        let product = update_product_service.execute(update_product_path, update_product_dto).await;
 
-        let product = serde_json::to_string(&product).unwrap();
-
-        product
+        match product 
+        {
+            Ok(p) =>
+            {
+                let product = serde_json::to_string(&p).unwrap();
+                return product.into_response();
+            },
+            Err(e) =>
+            {
+                return e.into_response();
+            }
+        }
     }
 }

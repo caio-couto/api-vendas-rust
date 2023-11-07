@@ -1,7 +1,9 @@
 [workspace]
 members = [
   "modules/products",
+  "modules/users",
   "shared/http",
   "shared/migration",
-  "shared/database"
+  "shared/database", 
+  "shared/errors",
 ]

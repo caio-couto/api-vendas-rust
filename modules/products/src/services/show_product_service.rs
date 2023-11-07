@@ -1,8 +1,10 @@
 use std::{sync::Arc, ops::Deref};
 use derive_builder::Builder;
+use errors::{ApiError, erros::Errors};
 use sea_orm::{ DatabaseConnection, DbErr, EntityTrait, prelude::Uuid};
 use serde::Deserialize;
-use crate::entity::products::{self, Entity};
+use crate::entity::products::{self, Entity, Model};
+use axum::http::StatusCode;
 
 #[derive(Builder, Clone, Default, Debug)]
 #[builder(setter(into))]
@@ -21,11 +23,20 @@ pub struct ShowProductService
 
 impl ShowProductService 
 {
-    pub async fn execute(&self, show_product_path: ShowProductPath) -> Result<Option<products::Model>, DbErr>
+    pub async fn execute(&self, show_product_path: ShowProductPath) -> Result<Model, ApiError>
     {        
-        let id = Uuid::parse_str(show_product_path.id.as_str()).unwrap();
-        let products: Option<products::Model> = Entity::find_by_id(id).one(self.connection.deref()).await?;
+        let id = Uuid::parse_str(show_product_path.id.as_str())
+        .map_err(|_| ApiError { error_code: Errors::INVALID_UUID, status_code: StatusCode::BAD_REQUEST })?;
 
-        Ok(products)
+        let products: Option<products::Model> = Entity::find_by_id(id)
+        .one(self.connection.deref())
+        .await
+        .map_err(|_: DbErr| ApiError { error_code: Errors::SERVER_ERROR, status_code: StatusCode::INTERNAL_SERVER_ERROR })?;
+        
+        match products 
+        {
+            Some(p) => Ok(p),
+            None => Err(ApiError { error_code: Errors::USER_NOT_FOUND, status_code: StatusCode::NOT_FOUND })
+        }
     }    
 }
