@@ -1,13 +1,11 @@
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveIden)]
-enum Products 
-{
+enum UserTokens {
     Table,
     Id,
-    Name,    
-    Price,
-    Quantity,
+    Token,
+    UserId,
     CreatedAt,
     UpdatedAt
 }
@@ -16,60 +14,54 @@ enum Products
 pub struct Migration;
 
 #[async_trait::async_trait]
-impl MigrationTrait for Migration 
-{
+impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> 
     {
-        let products_table = Table::create().table(Products::Table)
+        let user_tokens_table = Table::create().table(UserTokens::Table)
         .col
-        (  
-            ColumnDef::new(Products::Id)
+        (
+            ColumnDef::new(UserTokens::Id)
             .uuid()
-            .not_null()
             .primary_key()
+            .not_null()
             .extra("DEFAULT uuid_generate_v4()"),
         )
         .col
         (
-            ColumnDef::new(Products::Name)
-            .string()
-            .not_null(),
+            ColumnDef::new(UserTokens::Token)
+            .uuid()
+            .not_null()
+            .extra("DEFAULT uuid_generate_v4()"),
         )
         .col
         (
-            ColumnDef::new(Products::Price)
-            .decimal_len(10, 2)
-            .not_null(),
-        )
-        .col 
-        (
-            ColumnDef::new(Products::Quantity)
-            .integer()
-            .not_null(),
+            ColumnDef::new(UserTokens::UserId)
+            .uuid()
+            .not_null()
         )
         .col
         (
-            ColumnDef::new(Products::CreatedAt)
+            ColumnDef::new(UserTokens::CreatedAt)
             .timestamp_with_time_zone()
             .not_null()
             .default(Expr::current_timestamp()),
         )
         .col
         (
-            ColumnDef::new(Products::UpdatedAt)
+            ColumnDef::new(UserTokens::UpdatedAt)
             .timestamp_with_time_zone()
             .not_null()
             .default(Expr::current_timestamp()),
         )
         .to_owned();
 
-        manager.create_table(products_table).await
+        manager.create_table(user_tokens_table).await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> 
     {
-        let category_table = Table::drop().table(Products::Table).to_owned();
-        
-        manager.drop_table(category_table).await
+        let user_tokens_table = Table::drop().table(UserTokens::Table).to_owned();
+
+        manager.drop_table(user_tokens_table).await
     }
 }

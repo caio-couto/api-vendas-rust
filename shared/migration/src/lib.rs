@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20220101_000001_create_products;
 mod m20231104_135233_create_users;
+mod m20231111_234218_user_tokens;
 
 pub struct Migrator;
 
@@ -13,6 +14,7 @@ impl MigratorTrait for Migrator
         vec![
             Box::new(m20220101_000001_create_products::Migration),
             Box::new(m20231104_135233_create_users::Migration),
+            Box::new(m20231111_234218_user_tokens::Migration),
         ]
     }
 }

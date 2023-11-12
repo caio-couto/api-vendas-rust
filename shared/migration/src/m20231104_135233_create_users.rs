@@ -58,14 +58,14 @@ impl MigrationTrait for Migration
             ColumnDef::new(Users::CreatedAt)
             .timestamp_with_time_zone()
             .not_null()
-            .extra("DEFAULT NOW()"),
+            .default(Expr::current_timestamp()),
         )
         .col
         (
             ColumnDef::new(Users::UpdatedAt)
             .timestamp_with_time_zone()
             .not_null()
-            .extra("DEFAULT NOW()"),
+            .default(Expr::current_timestamp()),
         )
         .to_owned();
 

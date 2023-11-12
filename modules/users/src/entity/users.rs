@@ -12,6 +12,7 @@ pub struct Model
     pub name: String,
     #[sea_orm(unique)]
     pub email: String,
+    #[serde(skip_serializing)]
     pub password: String,
     pub avatar: Option<String>,
     pub created_at: DateTimeWithTimeZone,

@@ -6,4 +6,6 @@ members = [
   "shared/migration",
   "shared/database", 
   "shared/errors",
+  "shared/middlewares",
+  "config"
 ]

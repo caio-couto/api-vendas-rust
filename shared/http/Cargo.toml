@@ -6,11 +6,17 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+products = { path = "../../modules/products" }
+users = { path = "../../modules/users"  }
+errors = { path = "../errors" }
 database = { path = "../database" }
+config = { path = "../../config" }
 axum = "0.6.20"
 tokio = { version = "1.33.0", features = ["full"] }
-products = { path = "../../modules/products"}
-users = { path = "../../modules/users"  }
+tower = "0.4.13"
+tower-http = { version = "0.4.4", features = ["full"]}
+async-trait = "0.1.74"
+
 [dependencies.sea-orm]
 version = "0.12.0"
 features = [
