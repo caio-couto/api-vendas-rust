@@ -8,7 +8,7 @@ pub mod routes;
 
 #[tokio::main]
 async fn main() 
-{
+{    
     let shared_state = Arc::new(connection().await.unwrap());
     let app = Router::new()
     .nest("/", routes::routes())

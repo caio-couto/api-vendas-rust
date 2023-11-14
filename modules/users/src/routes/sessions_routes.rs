@@ -5,10 +5,10 @@ use sea_orm::DatabaseConnection;
 
 use crate::controllers::sessions_controller::SessionsController;
 
-pub fn user_routes() -> Router<Arc<DatabaseConnection>>
+pub fn sessions_routes() -> Router<Arc<DatabaseConnection>>
 {
-    let products_router = Router::new()
+    let sessions_router = Router::new()
     .route("/", post(SessionsController::create)); 
 
-    products_router
+    sessions_router
 }

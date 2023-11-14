@@ -9,11 +9,11 @@ use crate::controllers::user_avatar_controller::UserAvatarController;
 
 pub fn user_routes() -> Router<Arc<DatabaseConnection>>
 {
-    let products_router = Router::new()
+    let user_router = Router::new()
     .route("/", get(UserController::list))
     .route("/avatar", patch(UserAvatarController::update))
     .route_layer(middleware::from_fn(is_authenticated))
     .route("/", post(UserController::create));
 
-    products_router
+    user_router
 }

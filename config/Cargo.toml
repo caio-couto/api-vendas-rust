@@ -9,3 +9,6 @@ edition = "2021"
 errors = { path = "../shared/errors" }
 dotenv = "0.15.0"
 chrono = "0.4.31"
+lettre = { version = "0.11.1", features = ["smtp-transport", "hostname", "builder"]}
+axum = "0.6.20"
+derive_builder = "0.12.0"

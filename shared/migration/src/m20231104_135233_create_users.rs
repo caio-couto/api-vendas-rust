@@ -1,7 +1,7 @@
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveIden)]
-enum Users
+pub enum Users
 {
     Table,
     Id,

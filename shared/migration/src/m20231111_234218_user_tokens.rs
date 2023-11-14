@@ -1,7 +1,9 @@
 use sea_orm_migration::prelude::*;
+use crate::m20231104_135233_create_users::Users;
 
 #[derive(DeriveIden)]
-enum UserTokens {
+enum UserTokens 
+{
     Table,
     Id,
     Token,
@@ -52,6 +54,15 @@ impl MigrationTrait for Migration {
             .timestamp_with_time_zone()
             .not_null()
             .default(Expr::current_timestamp()),
+        )
+        .foreign_key
+        (
+            ForeignKey::create()
+            .name("TokenUser")
+            .from(UserTokens::Table, UserTokens::UserId)
+            .to(Users::Table, Users::Id)
+            .on_delete(ForeignKeyAction::Cascade)
+            .on_update(ForeignKeyAction::Cascade)
         )
         .to_owned();
 

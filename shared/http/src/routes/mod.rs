@@ -8,7 +8,8 @@ pub fn routes() -> Router<Arc<DatabaseConnection>>
     let routes = Router::new()
     .nest("/products", products::routes::products_routes::products_routes())
     .nest("/users", users::routes::user_routes::user_routes())
-    .nest("/sessions", users::routes::sessions_routes::user_routes());
+    .nest("/sessions", users::routes::sessions_routes::sessions_routes())
+    .nest("/password", users::routes::password::password_router());
 
     routes
 }
