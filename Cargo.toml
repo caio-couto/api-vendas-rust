@@ -2,6 +2,7 @@
 members = [
   "modules/products",
   "modules/users",
+  "modules/customers",
   "shared/http",
   "shared/migration",
   "shared/database", 

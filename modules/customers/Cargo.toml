@@ -1,22 +1,21 @@
 [package]
-name = "http"
+name = "customers"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-products = { path = "../../modules/products" }
-users = { path = "../../modules/users"  }
-customers ={ path = "../../modules/customers" }
-errors = { path = "../errors" }
-database = { path = "../database" }
-config = { path = "../../config" }
-axum = "0.6.20"
+errors = { path = "../../shared/errors" }
+middlewares = { path = "../../shared/middlewares" }
+config = { path = "../../config"}
+dotenv = "0.15.0"
 tokio = { version = "1.33.0", features = ["full"] }
-tower = "0.4.13"
-tower-http = { version = "0.4.4", features = ["full"]}
-async-trait = "0.1.74"
+axum = { version = "0.6.20", features = ["multipart"]}
+derive_builder = "0.12.0"
+serde = { version = "1.0.190", features = ["derive"]}
+serde_json = "1.0.107"
+chrono = "0.4.31"
 
 [dependencies.sea-orm]
 version = "0.12.0"
