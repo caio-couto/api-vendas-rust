@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  postgresql:
+    #The docker image name
+    image: 
+    #Something
+    restart: always
+    #the .env file where the database information is located
+    env_file:
+      - .postgres.env
+    #the port where docker is serving the database
+    ports: 
+      - 5430:5432
+  

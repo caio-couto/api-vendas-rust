@@ -28,6 +28,9 @@ impl SendForgotPasswordEmailService
 {
     pub async fn execute(&self, send_forgot_password_email_dto: SendForgotPasswordEmailDto) -> Result<(), ApiError>
     {
+        dotenv::dotenv()
+        .map_err(|_| ApiError {status_code: StatusCode::INTERNAL_SERVER_ERROR, error_code: Errors::INTERNAL_SERVER_ERROR, custom_message: None})?;
+
         let user = Users::find()
         .filter(users::Column::Email.eq(send_forgot_password_email_dto.email))
         .one(self.connection.deref())
@@ -49,7 +52,10 @@ impl SendForgotPasswordEmailService
         .await
         .map_err(|_: DbErr| ApiError { error_code: Errors::INTERNAL_SERVER_ERROR, status_code: StatusCode::INTERNAL_SERVER_ERROR, custom_message: None })?;
 
-        let body = MailTemplate::forgot_password_template(user.name, token.token.to_string(), "http://localhost:3000/reset_password?token=".to_string());
+        let url: String = dotenv::var("APP_WEB_URL")
+        .map_err(|_| ApiError {status_code: StatusCode::INTERNAL_SERVER_ERROR, error_code: Errors::INTERNAL_SERVER_ERROR, custom_message: None})?;
+
+        let body = MailTemplate::forgot_password_template(user.name, format!("{}/reset_password?token={}", url, token.token));
 
         let fake_email = FakeEmail::new(user.email, "Forgot Password Token".to_string(), body);  
 

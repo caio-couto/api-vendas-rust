@@ -1,7 +1,7 @@
 pub struct MailTemplate;
 impl MailTemplate 
 {
-    pub fn forgot_password_template(username: String, token: String, path: String) -> String
+    pub fn forgot_password_template(username: String, path: String) -> String
     {
         let css = "<style>
         .message-content
@@ -21,13 +21,13 @@ impl MailTemplate
                 <p>Recebemos uma solicitação de redefinição de senha para sua conta de usuário.</p>
                 <p>Se realmente foi você que solicitou, clique no link abaixo para escolher uma nova senha:</p>
                 <p>
-                <a href="{}{}">Resetar minha senha</a>
+                <a href="{}">Resetar minha senha</a>
                 </p>
                 <p>Caso você não tenha realizado esta solicitação, ignore este email.</p>
                 <br>
                 <p>Obrigado!</p>
                 <p>Equipe API Vendas.</p>
-            </div>"#, css, username, path, token
+            </div>"#, css, username, path
         );
 
         body_html

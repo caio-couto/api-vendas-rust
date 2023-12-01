@@ -4,6 +4,6 @@
 .env
 .postgres.env
 Cargo.lock
-
+docker-compose.yml
 uploads/*
 !uploads/.gitkeep
